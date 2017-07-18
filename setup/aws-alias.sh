@@ -6,6 +6,11 @@ alias aws-ssh='ssh -i ~/.ssh/aws-key-fast-ai.pem ubuntu@$instanceIp'
 alias aws-stop='aws ec2 stop-instances --instance-ids $instanceId'
 alias aws-state='aws ec2 describe-instances --instance-ids $instanceId --query "Reservations[0].Instances[0].State.Name"'
 
+# Get the id, public ip and state of all instances
+aws_get_all() {
+  aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]'
+}
+
 # A more generic alias for retrieving the id, public ip and state of an instance by type (t2.micro, p2.xlarge, etc.)
 aws_get_by_type() {
   aws ec2 describe-instances --filters "Name=instance-type,Values=$1" --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]'
@@ -16,9 +21,10 @@ aws_get_by_name() {
   aws ec2 describe-instances --filters "Name=tag:Name,Values=$1" --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]'
 }
 
-# A more generic ssh alias that accepts an instance ip and an optional path to a certificate file (otherwise uses a default path)
+# A more generic ssh alias that accepts an instance ip, an ssh username (.ie ec2-user, ubuntu) and an optional path
+# to a certificate file (otherwise uses a default path)
 aws_ssh() {
-  ssh -i ${2:-~/.ssh/aws-key-fast-ai.pem} ec2-user@"$1"
+  ssh -i ${3:-~/.ssh/keys/aws/aws-key-fast-ai.pem} "$2"@"$1"
 }
 
 # A more generic start instance alias
