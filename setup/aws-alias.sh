@@ -6,14 +6,14 @@ alias aws-ssh='ssh -i ~/.ssh/aws-key-fast-ai.pem ubuntu@$instanceIp'
 alias aws-stop='aws ec2 stop-instances --instance-ids $instanceId'
 alias aws-state='aws ec2 describe-instances --instance-ids $instanceId --query "Reservations[0].Instances[0].State.Name"'
 
-# Get the id, public ip and state of all instances
+# Get the id, public ip, state and name of all instances
 aws_get_all() {
-  aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]'
+  aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name,Tags[?Key==`Name`].Value]'
 }
 
-# A more generic alias for retrieving the id, public ip and state of an instance by type (t2.micro, p2.xlarge, etc.)
+# A more generic alias for retrieving the id, public ip, state and name of an instance by type (t2.micro, p2.xlarge, etc.)
 aws_get_by_type() {
-  aws ec2 describe-instances --filters "Name=instance-type,Values=$1" --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]'
+  aws ec2 describe-instances --filters "Name=instance-type,Values=$1" --query 'Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name,Tags[?Key==`Name`].Value]'
 }
 
 # A more generic alias for retrieving the id, public ip and state of an instance by tag with key=Name
