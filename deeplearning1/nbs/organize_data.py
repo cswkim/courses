@@ -42,6 +42,8 @@ DIR_TRAIN_NAME = 'train'
 
 DIR_TEST_NAME = 'test'
 
+DIR_RESULTS_NAME = 'results'
+
 FILE_PATTERN = '*.jpg'
 
 # List of tuples which control the image classes we will be using.
@@ -118,15 +120,21 @@ def main():
 
     # Create all the required directories
     valid_dir = os.path.join(DATASET_PATH, DIR_VALID_NAME)
+    results_dir = os.path.join(DATASET_PATH, DIR_RESULTS_NAME)
     sample_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME)
     sample_valid_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME,
                                     DIR_VALID_NAME)
     sample_train_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME,
                                     DIR_TRAIN_NAME)
     sample_test_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME, DIR_TEST_NAME)
+    sample_results_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME,
+                                      DIR_RESULTS_NAME)
 
     if not os.path.isdir(valid_dir):
         os.mkdir(valid_dir)
+
+    if not os.path.isdir(results_dir):
+        os.mkdir(results_dir)
 
     if not os.path.isdir(sample_dir):
         os.mkdir(sample_dir)
@@ -139,6 +147,9 @@ def main():
 
     if not os.path.isdir(sample_test_dir):
         os.mkdir(sample_test_dir)
+
+    if not os.path.isdir(sample_results_dir):
+        os.mkdir(sample_results_dir)
 
     # Move random files from the train folder into the valid folder
     _img_transfer(train_dir, valid_dir, VALIDATION_SIZE, move=True)
