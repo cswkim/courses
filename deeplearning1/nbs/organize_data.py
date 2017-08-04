@@ -24,8 +24,8 @@ http://wiki.fast.ai/index.php/Lesson_2_Notes
 """
 import argparse
 import fnmatch
-import glob
 import os
+from glob import glob
 from shutil import copyfile, rmtree
 
 import numpy as np
@@ -83,7 +83,7 @@ def _img_transfer(from_path, to_path, limit, move=False, pattern=FILE_PATTERN):
             break
 
     if do_transfer:
-        files = glob.glob(os.path.join(from_path, pattern))
+        files = glob(os.path.join(from_path, pattern))
         shuf = np.random.permutation(files)
         count = len(fnmatch.filter(os.listdir(to_path), pattern))
         transfer_count = limit - count if count < limit else 0
@@ -107,7 +107,7 @@ def _group_categories(path, pattern=FILE_PATTERN):
             os.mkdir(new_path)
 
         new_pattern = '{}.{}'.format(label, pattern)
-        files = glob.glob(os.path.join(path, new_pattern))
+        files = glob(os.path.join(path, new_pattern))
 
         for f in files:
             new_file_path = os.path.join(new_path, os.path.basename(f))
@@ -132,7 +132,7 @@ def reset():
 
     for cat in cat_subdirs:
         cat_path = os.path.join(train_dir, cat)
-        files = glob.glob(os.path.join(cat_path, FILE_PATTERN))
+        files = glob(os.path.join(cat_path, FILE_PATTERN))
         for f in files:
             move_path = os.path.join(train_dir, os.path.basename(f))
             os.rename(f, move_path)
@@ -146,7 +146,7 @@ def reset():
 
     for cat in cat_subdirs:
         cat_path = os.path.join(valid_dir, cat)
-        files = glob.glob(os.path.join(cat_path, FILE_PATTERN))
+        files = glob(os.path.join(cat_path, FILE_PATTERN))
         for f in files:
             move_path = os.path.join(train_dir, os.path.basename(f))
             os.rename(f, move_path)
