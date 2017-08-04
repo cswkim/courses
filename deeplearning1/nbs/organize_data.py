@@ -22,10 +22,11 @@ The above will then be organized according to the structure outlined in the
 **Preparing the Data** section of the lesson 2 notes:
 http://wiki.fast.ai/index.php/Lesson_2_Notes
 """
+import argparse
 import fnmatch
 import glob
 import os
-from shutil import copyfile
+from shutil import copyfile, rmtree
 
 import numpy as np
 
@@ -113,6 +114,46 @@ def _group_categories(path, pattern=FILE_PATTERN):
             os.rename(f, new_file_path)
 
 
+def reset():
+    """
+    Attempt to reset the dataset folder structure to the original Kaggle
+    structure, described above. If a root result folder has been created, will
+    leave that untouched in case weights have been saved.
+    """
+    # Delete the sample directory
+    sample_dir = os.path.join(DATASET_PATH, DIR_SAMPLE_NAME)
+    rmtree(sample_dir)
+
+    # Move all training category images into the root and delete the
+    # subdirectories
+    train_dir = os.path.join(DATASET_PATH, DIR_TRAIN_NAME)
+    cat_subdirs = [sub for sub in os.listdir(train_dir)
+                   if os.path.isdir(os.path.join(train_dir, sub))]
+
+    for cat in cat_subdirs:
+        cat_path = os.path.join(train_dir, cat)
+        files = glob.glob(os.path.join(cat_path, FILE_PATTERN))
+        for f in files:
+            move_path = os.path.join(train_dir, os.path.basename(f))
+            os.rename(f, move_path)
+        rmtree(cat_path)
+
+    # Move all valid category images back into the training folder and delete
+    # the valid directory
+    valid_dir = os.path.join(DATASET_PATH, DIR_VALID_NAME)
+    cat_subdirs = [sub for sub in os.listdir(valid_dir)
+                   if os.path.isdir(os.path.join(valid_dir, sub))]
+
+    for cat in cat_subdirs:
+        cat_path = os.path.join(valid_dir, cat)
+        files = glob.glob(os.path.join(cat_path, FILE_PATTERN))
+        for f in files:
+            move_path = os.path.join(train_dir, os.path.basename(f))
+            os.rename(f, move_path)
+
+    rmtree(valid_dir)
+
+
 def main():
     # Original Kaggle directories
     train_dir = os.path.join(DATASET_PATH, DIR_TRAIN_NAME)
@@ -168,4 +209,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--reset', action='store_true',
+                        help="Reset your data folder structure")
+    args = parser.parse_args()
+
+    if args.reset:
+        reset()
+    else:
+        main()
